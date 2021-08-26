@@ -1,0 +1,3 @@
+python gradient_descent_parameter_fitting.py
+
+julia gradient_descent_parameter_fitting.jl
