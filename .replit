@@ -1,2 +1,2 @@
-language = "julia"
-run = "julia 001/gradient_descent_parameter_fitting.jl"
+language = "python"
+run = "python 002/test_neural_net.py"
