@@ -1,4 +1,4 @@
-function sum_of_a_million()
+tfunction sum_of_a_million()
   sum = 0
   for i in 1:1000000
     sum += i

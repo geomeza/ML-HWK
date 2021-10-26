@@ -1,2 +1,2 @@
 language = "python"
-run = "python 002/test_neural_net.py"
+run = "python 004/artificial_datasets.py"
