@@ -8,6 +8,7 @@ from artificial_datasets import generate_dataset
 from artificial_datasets import split_into_x_y
 
 import matplotlib.pyplot as plt
+import numpy as np
 import random
 
 center_points = [[1,1], [1,3], [3,3], [3,1]]
@@ -52,5 +53,32 @@ for trees in range(1,100):
 plt.plot(list(scores.keys()), list(scores.values()))
 plt.grid(True)
 plt.savefig("random_forest_test.png")
+plt.clf()
 
+rf = RandomForestClassifier(n_estimators = 100)
+rf.fit(x_train, y_train)
+
+for point in complete_dataset:
+    print(point)
+    if point[2] == 'x':
+        color = "bo"
+    else:
+        color = "ro"
+    plt.plot(point[0], point[1], color)
+
+for i in np.arange(-1, 4, 0.01):
+    for j in np.arange(-1,4, 0.01):
+        prediction = rf.predict([[i,j]])
+        if prediction == 'x':
+            color = "bo"
+        else:
+            color = "ro"
+        plt.plot(i, j, color, markersize=1)
+
+plt.grid(True)
+plt.spines['left'].set_position('zero')
+plt.spines['right'].set_color('none')
+plt.spines['bottom'].set_position('zero')
+plt.spines['top'].set_color('none')
+plt.savefig("prediction_space.png")
 print("done")
