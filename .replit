@@ -1,2 +1,2 @@
 language = "python"
-run = "python asgmt_011/minmax.py"
+run = "python asgmt_011/recombining_minmax.py"

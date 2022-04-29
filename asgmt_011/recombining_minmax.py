@@ -9,6 +9,8 @@ class MinMaxNode:
         self.player = player
         self.get_opponent()
         self.create_children()
+        if self.board not in tree.node_dict:
+            tree.node_dict[self] = self.children
 
     def get_opponent(self):
         if self.player == '1':
@@ -53,6 +55,11 @@ class MinMaxNode:
                 new_board = list(new_board)
                 new_board[i] = self.player
                 new_board = "".join(new_board)
+                tree_nodes = [node for node in self.tree.node_dict.keys()]
+                tree_boards = [node.board for node in self.tree.node_dict.keys()]
+                if new_board in tree_boards:
+                    self.children.append(tree_nodes[tree_boards.index(new_board)])
+                    continue
                 new_child = MinMaxNode("" + new_board, self.opponent, self, self.tree)
                 self.children.append(new_child)
 
@@ -61,11 +68,12 @@ class GameTree:
     def __init__(self):
         self.name = "gametree"
         self.nodes = 0
+        self.node_dict = {}
         self.root = MinMaxNode("000000000", "1", None, self)
 
     def print_nodes(self):
-        print(self.nodes)
-        return self.nodes
+        print(len(self.node_dict))
+        return len(self.node_dict)
 
 
 
