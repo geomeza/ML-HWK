@@ -23,11 +23,12 @@ def descend(function, points, h, alpha):
 
 descent_function = lambda x,y: 1 + 2*x**2 + 3*y**2
 
-start = time.time()
-for i in range(10):
-  first_points = descend(descent_function, [1,2], 0.1, 0.001)
-  print(first_points)
-  second_points = descend(descent_function, first_points, 0.1, 0.001)
-  print(second_points)
 
-print("Average time in python:", (time.time()-start)/10)
+# start = time.time()
+# for i in range(10):
+#   first_points = descend(descent_function, [1,2], 0.1, 0.001)
+#   print(first_points)
+#   second_points = descend(descent_function, first_points, 0.1, 0.001)
+#   print(second_points)
+
+# print("Average time in python:", (time.time()-start)/10)
