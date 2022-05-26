@@ -1,5 +1,6 @@
 import random
 import numpy as np
+import matplotlib.pyplot as plt
 
 class Node:
 
@@ -100,17 +101,51 @@ mut_rate = 0.05
 
 nets = [Graph(edges, tanh, mut_rate) for _ in range(30)]
 
-for _ in range(10):
+total_avgs = []
+generation = []
+
+print("starting generation making")
+
+for i in range(500):
+    print(i, " generation")
     nets_rss = []
 
     for net in nets:
         nets_rss.append(find_rss(normalized_points, net))
-    print(sum(nets_rss)/ len(nets_rss))
+    total_avgs.append(sum(nets_rss)/ len(nets_rss))
+    generation.append(i)
 
     top_15 = sorted(nets, key = lambda n: find_rss(normalized_points, n))[:15]
 
     children = [Graph(edges, tanh, parent.mut_rate * wacky_mut_rate(), {edge: parent.weights[edge] + parent.mut_rate*(np.random.normal()) for edge in edges}) for parent in top_15]
     nets = top_15 + children
+    if i == 0 or i == 499:
+        if i == 0:
+            print("making first regression curve")
+        if i == 499:
+            print("making final regression curve")
+        graph_fig = plt.gca()
+        for point in normalized_points:
+            graph_fig.plot(point[0], point[1], "ro")
+        for net in nets:
+            plt.plot([point[0] for point in normalized_points], [net.node_outut(net.output_node, point[0]) for point in normalized_points])
+        if i == 0:
+            plt.savefig("first_regression_curve.png")
+            plt.clf()
+            print("first regression curve done!")
+        if i == 499:
+            plt.savefig("final_regression_curve.png")
+            plt.clf()
+            print("final regression curve done!")
 
 
+print("starting plot")
+plt.clf()
+graph_fig = plt.gca()
+plt.plot(generation, total_avgs)
+plt.title("AVG RSS PER GEN")
+plt.savefig("avg_rss.png")
+
+plt.clf()
+print("regression curve_first_gen")
 print("DONE!")
