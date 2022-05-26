@@ -11,20 +11,16 @@ class Game:
     def make_board(self, board):
         if board is None:
             self.board = "000000000"
+            self.current_player = 0
         else:
             self.board = board
             self.update_current_player()
 
     def update_current_player(self):
-        one_count = 0
-        two_count = 0
-        for row in self.board:
-            for entry in row:
-                if entry == '1':
-                    one_count += 1
-                if entry == '2':
-                    two_count += 1
-        if two_count + 1 == one_count:
+        new_board = list(self.board)
+        two_count = new_board.count("2")
+        one_count = new_board.count("1")
+        if two_count == one_count - 1:
             self.current_player = 1
         elif two_count == one_count:
             self.current_player = 0
@@ -39,13 +35,23 @@ class Game:
         return "".join([str(x) for x in board])
 
     def make_move(self):
+        self.update_current_player()
+        strategy = None
+        move_token = None
         if self.current_player == 0:
             move = "first"
+            move_token = "1"
+            strategy = self.strategies[0]
         if self.current_player == 1:
             move = "second"
-        move_index = self.strategies[self.current_player].get_move(self.board, move)
+            move_token = "2"
+            strategy = self.strategies[1]
+        move_index = strategy.get_move(self.board, move)
         self.board = list(self.board)
-        self.board[move_index] = self.player_move[self.current_player]
+        if self.board[move_index] != "0":
+            print(move_index, self.board)
+            raise Exception("false move")
+        self.board[move_index] = move_token
         self.board = "".join(self.board)
 
     def check_win(self):
@@ -75,10 +81,6 @@ class Game:
         self.check_win()
         if self.winner is None:
             self.check_tie()
-        if self.started:
-            self.current_player += 1
-            if self.current_player == 2:
-                self.current_player = 0
         return self.winner
 
     def play_game(self):

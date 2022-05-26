@@ -1,14 +1,16 @@
 class MinMaxNode:
 
-    def __init__(self, board, player, parent, tree):
+    def __init__(self, board, player, parent, tree, move):
         self.winner = None
         self.tree = tree
         self.parent = parent
         self.children = []
         self.board = "" + board
         self.player = player
+        self.move_index = move
         self.get_opponent()
         self.create_children()
+        self.score = self.get_score()
         if self.board not in tree.node_dict:
             tree.node_dict[self] = self.children
 
@@ -60,22 +62,67 @@ class MinMaxNode:
                 if new_board in tree_boards:
                     self.children.append(tree_nodes[tree_boards.index(new_board)])
                     continue
-                new_child = MinMaxNode("" + new_board, self.opponent, self, self.tree)
+                new_child = MinMaxNode("" + new_board, self.opponent, self, self.tree, i)
                 self.children.append(new_child)
+
+    def get_score(self):
+        self.check_win()
+        if self.winner == "tie":
+            return 0
+        if self.winner == self.tree.player:
+            return 1
+        elif self.winner is None:
+            scores = [child.score for child in self.children]
+            if self.player == self.tree.player:
+                return max(scores)
+            elif self.opponent == self.tree.player:
+                return min(scores)
+        else:
+            return -1
 
 class GameTree:
 
-    def __init__(self):
+    def __init__(self, player):
         self.name = "gametree"
         self.nodes = 0
         self.node_dict = {}
-        self.root = MinMaxNode("000000000", "1", None, self)
+        self.player = player
+        self.root = MinMaxNode("000000000", "1", None, self, None)
 
     def print_nodes(self):
         print(len(self.node_dict))
         return len(self.node_dict)
 
+class MinMaxStrategy:
+
+    def __init__(self, name):
+        self.name = name
+        self.player = None
+        self.first_tree = GameTree("1")
+        self.second_tree = GameTree("2")
+
+    def generate_dict_and_player(self, move):
+        tree = None
+        if move == "first":
+            self.player = "1"
+            tree = self.first_tree
+        if move == "second":
+            self.player = "2"
+            tree = self.second_tree
+        self.node_dict = {node.board: node.children for node in tree.node_dict.keys()}
+
+    def get_move(self, board, move):
+        if self.player is None:
+            self.generate_dict_and_player(move)
+        children = self.node_dict[board]
+        max_score = max([child.score for child in children])
+        for child in children:
+            if child.score == max_score:
+                for a,b,c in zip(child.board, board, [i for i in range(9)]):
+                    if a != b:
+                        return c
+        raise Exception("this shouldn't happen")
 
 
-test_tree = GameTree()
-print(test_tree.print_nodes())
+# test_tree = GameTree("1")
+# print(test_tree.print_nodes())

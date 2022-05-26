@@ -18,8 +18,12 @@ class Strategy:
 
     def get_move(self, board, move):
         if move == "first":
+            if board.count("1") != board.count("2"):
+                raise Exception("this is false")
             return self.first_move_list[board]
         if move == "second":
+            if board.count("1") == board.count("2"):
+                raise Exception("this is false second move")
             return self.second_move_list[board]
 
     def make_move_list(self, second_move, board = None):
